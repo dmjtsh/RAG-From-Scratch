@@ -48,6 +48,7 @@ def split_list(input_list: list, split_size: int) -> list[list[str]]:
 
     return splitted_list
 
+# Split all sentences on chunks
 def split_text_into_chunks(pages_and_texts : list[dict], chunk_size) -> list[dict]:
     # Loop through pages and texts and split sentences into chunks
     for item in tqdm(pages_and_texts):
@@ -77,5 +78,14 @@ def split_chunks_into_item(pages_and_texts : list[dict]) -> list[dict]:
             chunk_dict["chunk_token_count"] = len(joined_sentence_chunk) / 4 # 1 token = ~4 characters
 
             pages_and_chunks.append(chunk_dict)
+
+    return pages_and_chunks
+
+def split_all_text_into_chunks(pdf_path : str) -> list[dict]:
+    pages_and_texts = open_and_read_pdf(pdf_path)
+
+    pages_and_texts  = divide_text_into_sentences(pages_and_texts)
+    pages_and_texts  = split_text_into_chunks(pages_and_texts, 5)
+    pages_and_chunks = split_chunks_into_item(pages_and_texts)
 
     return pages_and_chunks
