@@ -2,10 +2,8 @@ import os
 import requests
 import pandas as pd
 
-from text_handler import text_formatter, open_and_read_pdf
+from text_handler import *
 from tqdm.auto import tqdm
-
-from spacy.lang.en import English
 
 if __name__ == "__main__":
     pdf_path = "poker.pdf"
@@ -15,21 +13,11 @@ if __name__ == "__main__":
     else:
         pages_and_texts = open_and_read_pdf(pdf_path)
 
+        pages_and_texts = divide_text_into_sentences(pages_and_texts)
+        pages_and_texts = split_text_into_chunks(pages_and_texts, 5)
+        pages_and_texts = split_chunks_into_item(pages_and_texts)
+
         df = pd.DataFrame(pages_and_texts)
         print(df.describe())
 
-        # Divide into sentences + chunking
-        nlp = English()
-        nlp.add_pipe("sentencizer") # <--- For Dividing on Sentences
-
-        for item in tqdm(pages_and_texts):
-            item["sentences"] = list(nlp(item["text"]).sents)
-            # Make sure all sentences are strings
-            # item["sentences"] = [str(sentence) for sentence in item["sentences"]]
-
-            # Count the sentences
-            item["page_sentence_length"] = len(item["sentences"])
-
-
-
-
+        print(pages_and_texts[1]["sentence_chunk"])
